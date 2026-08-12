@@ -1,19 +1,34 @@
-# Postgres 16 on 5433, so it does not collide with a local 5432.
-# `unaccent` and `pg_trgm` ship with the standard image; the schema enables them.
+# Local demo database. Postgres 16 on 5433, so it does not collide with a
+# local 5432. `unaccent` and `pg_trgm` ship with the standard image; the schema
+# enables them.
+#
+# Two deliberate choices here:
+#
+# The port is bound to 127.0.0.1 rather than published on every interface.
+# `'5433:5432'` — the form most compose files use — listens on 0.0.0.0, which
+# on a shared network makes this database reachable from other machines. It
+# holds nothing but invented fixtures, but a throwaway database with a guessable
+# password should not be answering the LAN.
+#
+# The credentials come from the environment with defaults, so no literal
+# password sits in a tracked file. The defaults are deliberately the canonical
+# throwaway ones: this database is created empty, seeded with the fixtures in
+# this repository, and grants access to nothing else. Override them in `.env`
+# if you would rather not run even that.
 services:
   postgres:
     image: postgres:16-alpine
     container_name: rag-postgres-retrieval-db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: rag_demo
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-rag_demo}
     ports:
-      - '5433:5432'
+      - '127.0.0.1:5433:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres -d rag_demo']
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-rag_demo}']
       interval: 5s
       timeout: 5s
       retries: 10

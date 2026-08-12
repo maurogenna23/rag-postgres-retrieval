@@ -163,7 +163,7 @@ cd rag-postgres-retrieval
 npm install
 cp .env.example .env
 
-# Postgres 16 with unaccent + pg_trgm, on port 5433
+# Postgres 16 with unaccent + pg_trgm, bound to 127.0.0.1:5433
 docker compose up -d
 
 # Creates the schema, its extensions and its indexes
@@ -286,9 +286,16 @@ written by hand.
 
 One caveat: it was verified against a local PostgreSQL 16, not against the
 `docker-compose.yml` in this repository, because Docker was not available on
-the machine where it was assembled. The compose file pins the same major
-version and the standard image ships both extensions, but if it fails for you,
-that is the least-tested file here.
+the machine where it was assembled. Its YAML parses and it pins the same major
+version, and the standard image ships both extensions — but it has never been
+brought up, so if something here fails for you, that is the file to suspect.
+
+The compose file binds the database to `127.0.0.1` rather than publishing it on
+every interface, and takes its credentials from the environment with throwaway
+defaults. That is worth noting because the obvious `'5433:5432'` form listens
+on `0.0.0.0`: on a shared network it hands a guessable-password database to
+anyone on the same wifi. It holds nothing but the invented fixtures in this
+repository, but it should not be answering the LAN either way.
 
 ## Notes on the extraction
 
