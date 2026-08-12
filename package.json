@@ -1,0 +1,29 @@
+{
+  "name": "rag-postgres-retrieval",
+  "version": "1.0.0",
+  "description": "Multi-tenant document retrieval on plain PostgreSQL — full-text search, trigram similarity and unaccented matching, with no vector database.",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "db:setup": "tsx src/cli/setup.ts",
+    "seed": "tsx src/cli/seed.ts",
+    "search": "tsx src/cli/search.ts",
+    "crawl": "tsx src/cli/crawl.ts",
+    "test": "node --import tsx --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.5",
+    "mammoth": "^1.8.0",
+    "pdf.js-extract": "^0.2.1",
+    "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "@types/pg": "^8.11.10",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

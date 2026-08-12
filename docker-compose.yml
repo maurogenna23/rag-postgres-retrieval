@@ -1,0 +1,22 @@
+# Postgres 16 on 5433, so it does not collide with a local 5432.
+# `unaccent` and `pg_trgm` ship with the standard image; the schema enables them.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: rag-postgres-retrieval-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rag_demo
+    ports:
+      - '5433:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d rag_demo']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
